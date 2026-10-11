@@ -13,6 +13,8 @@ for (const path of [
   `curriculum/${record}`,
   "ai/proposals",
   `ai/proposals/${record}`,
+  "ai/task-proposals",
+  `ai/task-proposals/${record}`,
 ])
   test(`protected session boundary: ${path}`, async ({ page }) => {
     await page.goto(`/workspace/${club}/${path}`);

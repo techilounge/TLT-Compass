@@ -17,7 +17,7 @@ export default async function RecordBookPage({
   const { clubId, participantId } = await params;
   if (!uuid.safeParse(clubId).success || !uuid.safeParse(participantId).success)
     notFound();
-  const { db, club } = await requireClub(clubId);
+  const { db, club, roles } = await requireClub(clubId);
   let rows: unknown[][];
   try {
     rows = await loadRecordRows(db, club, participantId);
@@ -156,6 +156,15 @@ export default async function RecordBookPage({
                         <p className="text-sm text-muted-foreground">
                           Page {item.source_page} · {item.source_section}
                         </p>
+                        {roles.some((r) =>
+                          ["director", "coordinator"].includes(r),
+                        ) && (
+                          <Link
+                            href={`/workspace/${clubId}/ai/task-proposals?participant_id=${participantId}&requirement_id=${item.id}`}
+                          >
+                            Suggest a supervised task
+                          </Link>
+                        )}
                         {completion && (
                           <p className="mt-2 text-sm">
                             Reviewed <LocalDate value={String(completion[8])} />{" "}

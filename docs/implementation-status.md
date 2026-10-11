@@ -1,5 +1,7 @@
 # Implementation status
 
+Continuation — migration 031 implements human-reviewed AI task suggestions from current-level Record Book requirements. Participant identity and due date are excluded from provider input. Approval rechecks active consent and produces only a private draft; assignment, points and completion remain separate. Five targeted SQL cases pass and staging migration 031 is applied. GitHub CI run 38175457031 passed curriculum correction/retrieval commit cfe3aff, including native PostgreSQL, full browser checks and synthetic restore. Latest task-proposal CI and browser checks are recorded separately.
+
 Continuation — migration 030 adds manager-authorized draft curriculum corrections, optimistic revision checks and retained before/after history. Approval still freezes requirements, and direct browser UPDATE remains denied. Applied to staging without demo data. Local validation: 98 SQL cases and 56 unit cases pass; browser and updated GitHub CI evidence recorded separately. The rules assistant now selects complete relevance-ranked excerpts within the router context bound and reports its partial retrieval scope. Platform Owner provisioning and the supplied 226-row private quiz preview are complete; question classification/source review remains pending. Automatic development progression remains authorized.
 
 ## Current state — 11 October 2026

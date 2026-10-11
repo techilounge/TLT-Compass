@@ -84,9 +84,14 @@ export default async function AIPage({
       <AIAssistant clubId={clubId} versions={versions.data ?? []} />
       {manager && <AIAnalytics clubId={clubId} seasons={seasons?.data ?? []} />}
       {roles.some((r) => ["director", "coordinator"].includes(r)) && (
-        <Link href={`/workspace/${clubId}/ai/proposals`}>
-          Event proposals and human review
-        </Link>
+        <div className="flex flex-wrap gap-4">
+          <Link href={`/workspace/${clubId}/ai/proposals`}>
+            Event proposals and human review
+          </Link>
+          <Link href={`/workspace/${clubId}/ai/task-proposals`}>
+            Task suggestions and human review
+          </Link>
+        </div>
       )}
     </main>
   );
