@@ -28,8 +28,8 @@ Reviewed against blueprint sections 4, 10–13 and 15 using application source, 
 ## Acceptance evidence and limits
 
 - Thirty-one migrations applied to authorized staging without demo youth seed data. Corrected director account is explicitly provisioned as Platform Owner; MFA remains required.
-- Local: 98 SQL integration cases and 56 unit cases pass. All 56 browser cases report success. Windows runner teardown hangs afterward; preceding Linux CI revisions exit cleanly. These browser cases do not prove authenticated hosted workflows.
-- GitHub CI passed through cfe3aff: native PostgreSQL 17, embedded SQL, unit/browser/quality checks and synthetic restore. Check the latest implementation commit separately.
+- GitHub CI run 38176099522: 103 SQL cases, 56 unit cases and 58 browser cases pass, with clean Linux runner exit. Local Windows browser shutdown still hangs after successful cases. These checks do not prove authenticated hosted workflows.
+- GitHub CI passed implementation commit 54e816a: native PostgreSQL 17, embedded SQL, unit/browser/quality checks and synthetic restore. Subsequent runbook-only changes have separate CI runs.
 - Synthetic restore verifies fixture records, tenant isolation and credential denial, not real Supabase Auth, Storage or key recovery.
 - No live provider credentials configured, inference performed or model spend incurred. Global AI defaults off with zero budget.
 - The actual quiz CSV lacks app classifications/manual citations. These remain unresolved rather than invented.
