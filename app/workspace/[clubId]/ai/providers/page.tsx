@@ -57,6 +57,14 @@ export default async function ProvidersPage({
   const owner = permission.data === true,
     action = configureAI.bind(null, clubId),
     notice = (await searchParams).notice;
+  const globalSettings = owner
+    ? await db
+        .from("ai_global_settings")
+        .select("*")
+        .eq("singleton", true)
+        .single()
+    : null;
+  if (globalSettings?.error) throw Error("Unable to load global AI controls");
   return (
     <main
       id="main"
@@ -81,6 +89,64 @@ export default async function ProvidersPage({
           eligible club manager role and MFA. Club director access does not
           automatically grant platform ownership.
         </p>
+      )}
+      {owner && (
+        <details className="panel">
+          <summary>Global AI limits across every club</summary>
+          <p>
+            Both global and club switches must be enabled. Failed and
+            interrupted reservations count toward the UTC monthly ceiling. These
+            settings affect every tenant.
+          </p>
+          <form action={action} className="mt-5 grid gap-4 md:grid-cols-2">
+            <Hidden name="operation" value="global" />
+            <label>
+              <input
+                type="checkbox"
+                name="enabled"
+                defaultChecked={globalSettings?.data?.enabled ?? false}
+              />{" "}
+              Enable AI platform-wide
+            </label>
+            <label>
+              Monthly ceiling (USD)
+              <input
+                name="monthly_budget"
+                type="number"
+                min="0"
+                max="100000"
+                step="0.000001"
+                required
+                defaultValue={globalSettings?.data?.monthly_budget_usd ?? 0}
+              />
+            </label>
+            <label>
+              Attempts per minute, all clubs
+              <input
+                name="minute_limit"
+                type="number"
+                min="1"
+                max="10000"
+                required
+                defaultValue={globalSettings?.data?.attempts_per_minute ?? 60}
+              />
+            </label>
+            <label>
+              Attempts per person per minute, all clubs
+              <input
+                name="actor_minute_limit"
+                type="number"
+                min="1"
+                max="100"
+                required
+                defaultValue={
+                  globalSettings?.data?.actor_attempts_per_minute ?? 10
+                }
+              />
+            </label>
+            <SaveButton>Save global AI limits</SaveButton>
+          </form>
+        </details>
       )}
       {owner && (
         <details className="panel">

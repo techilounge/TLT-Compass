@@ -70,6 +70,10 @@ export async function createTestDatabase(): Promise<TestDatabase> {
     await db.exec(await readFile(`supabase/migrations/${file}`, "utf8"));
   }
   await db.exec(await readFile("supabase/seed.sql", "utf8"));
+  // Explicit synthetic test configuration; real migrations default global AI off.
+  await db.exec(
+    "update public.ai_global_settings set enabled=true,monthly_budget_usd=100000,attempts_per_minute=10000,actor_attempts_per_minute=100",
+  );
   return db;
 }
 export async function asUser(db: TestDatabase, user: string, aal = "aal2") {

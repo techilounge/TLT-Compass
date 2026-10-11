@@ -25,10 +25,22 @@ export async function configureAI(clubId: string, form: FormData) {
   let notice = "saved";
   try {
     const operation = z
-      .enum(["settings", "provider", "model", "reset", "test", "key"])
+      .enum(["global", "settings", "provider", "model", "reset", "test", "key"])
       .parse(form.get("operation"));
     let result;
-    if (operation === "settings") {
+    if (operation === "global") {
+      const input = z
+        .object({
+          monthly_budget: z.coerce.number().min(0).max(100000),
+          minute_limit: z.coerce.number().int().min(1).max(10000),
+          actor_minute_limit: z.coerce.number().int().min(1).max(100),
+        })
+        .parse(Object.fromEntries(form));
+      result = await db.rpc("configure_global_ai", {
+        ...input,
+        ai_enabled: form.get("enabled") === "on",
+      });
+    } else if (operation === "settings") {
       const input = z
         .object({
           monthly_budget_usd: z.coerce.number().min(0).max(10000),
