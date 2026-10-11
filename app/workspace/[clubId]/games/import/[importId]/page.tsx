@@ -53,8 +53,8 @@ export default async function QuestionPreview({
       <p>
         Review correctness, wording, age suitability and source context. No
         questions are published until an authorized manager confirms. Correct
-        invalid source rows and upload a corrected file; select only valid
-        reviewed rows here.
+        invalid source rows using draft enrichment, then select only valid
+        reviewed rows here. Original source values are preserved.
       </p>
       {(await searchParams).notice && (
         <p role="alert">
@@ -69,6 +69,14 @@ export default async function QuestionPreview({
         {rows.map((row, index) => (
           <section key={row.row} className="panel">
             <h2>CSV row {row.row}</h2>
+            {data.status === "preview" && manager && (
+              <Link
+                href={`/workspace/${clubId}/games/import/${importId}/rows/${index}`}
+              >
+                Edit wording, answers and enrichment
+              </Link>
+            )}
+            {!row.question && <p>{Object.values(row.original)[0]}</p>}
             {row.errors.map((e) => (
               <p key={e} className="notice">
                 {e}

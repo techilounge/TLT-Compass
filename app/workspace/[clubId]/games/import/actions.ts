@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { requireClub } from "@/lib/auth/session";
 import { departments, uuid } from "@/modules/program-rules/contracts";
-import { parseQuestionCsv } from "@/modules/games/questions";
+import { parseQuestionCsv, questionInput } from "@/modules/games/questions";
 export async function uploadQuestions(clubId: string, form: FormData) {
   if (!uuid.safeParse(clubId).success) redirect("/workspace");
   const { db, roles } = await requireClub(clubId);
@@ -113,4 +113,50 @@ export async function publishQuestions(
     redirect(`/workspace/${clubId}/games/import/${id}?notice=review`);
   revalidatePath(`/workspace/${clubId}/games`, "layout");
   redirect(`/workspace/${clubId}/games/import/${id}`);
+}
+
+export async function editQuestion(
+  clubId: string,
+  importId: string,
+  row: number,
+  form: FormData,
+) {
+  if (!uuid.safeParse(clubId).success || !uuid.safeParse(importId).success)
+    redirect("/workspace");
+  const { db, roles } = await requireClub(clubId);
+  if (!roles.some((r) => ["director", "coordinator"].includes(r)))
+    redirect(`/workspace/${clubId}/games`);
+  const choices = form.getAll("choices").map((value) => String(value).trim());
+  while (choices.length && choices.at(-1) === "") choices.pop();
+  const answer = z
+    .string()
+    .regex(/^[0-5]$/)
+    .safeParse(form.get("correct_index"));
+  const payload = questionInput.safeParse({
+    prompt: form.get("prompt"),
+    choices,
+    correct_index: answer.success ? Number(answer.data) : -1,
+    explanation: form.get("explanation"),
+    department_code: form.get("department_code"),
+    level: Number(form.get("level")),
+    difficulty: form.get("difficulty"),
+    source_reference: form.get("source_reference"),
+  });
+  const revision = z.coerce
+    .number()
+    .int()
+    .min(0)
+    .safeParse(form.get("revision"));
+  const destination = `/workspace/${clubId}/games/import/${importId}`;
+  if (!payload.success || !revision.success)
+    redirect(`${destination}/rows/${row}?notice=validation`);
+  const result = await db.rpc("edit_question_candidate", {
+    target_import: importId,
+    row_index: row,
+    expected_revision: revision.data,
+    payload: payload.data,
+  });
+  revalidatePath(destination);
+  if (result.error) redirect(`${destination}/rows/${row}?notice=conflict`);
+  redirect(destination);
 }

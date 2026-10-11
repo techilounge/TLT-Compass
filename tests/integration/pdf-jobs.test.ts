@@ -69,7 +69,7 @@ describe("durable private PDF jobs", () => {
     await db.query("select public.finish_pdf_calendar($1,$2,$3,null)", [
       job,
       token,
-      candidates,
+      JSON.stringify(candidates),
     ]);
     expect(
       (

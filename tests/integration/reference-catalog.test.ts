@@ -39,7 +39,14 @@ describe("referenced draft curriculum", () => {
     ).toBe(true);
   });
   it("imports once into an explicit draft level and preserves citation details", async () => {
-    const args = [ids.north, rule, 2, "administrative", catalogVersion, items];
+    const args = [
+      ids.north,
+      rule,
+      2,
+      "administrative",
+      catalogVersion,
+      JSON.stringify(items),
+    ];
     expect(
       (
         await db.query<{ count: number }>(
@@ -78,7 +85,7 @@ describe("referenced draft curriculum", () => {
     await expect(
       db.query(
         "select public.import_requirement_catalog($1,$2,3,'administrative',$3,$4)",
-        [ids.north, rule, catalogVersion, items],
+        [ids.north, rule, catalogVersion, JSON.stringify(items)],
       ),
     ).rejects.toThrow("Not authorized");
     await asUser(db, ids.director);
@@ -89,7 +96,7 @@ describe("referenced draft curriculum", () => {
     await expect(
       db.query(
         "select public.import_requirement_catalog($1,$2,3,'administrative',$3,$4)",
-        [ids.north, rule, catalogVersion, items],
+        [ids.north, rule, catalogVersion, JSON.stringify(items)],
       ),
     ).rejects.toThrow("Draft rule");
   });

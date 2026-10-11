@@ -7,3 +7,9 @@ Question correctness and distinct choices are validated on server and database b
 Migrations 021–022 applied to staging on 11 October 2026 without demo questions or game results. The current full suite passes 45 unit and 81 SQL integration tests; production build/lint/typecheck pass. Question tests cover exact original headers, explicit answer formats, bad/duplicate answers, injection-as-data, shuffled correctness, tenant isolation, atomic selected publication and participant answer denial. Game result tests cover scope, retries, ceilings/attempt limits, adult review, no automatic points/completion and session closure.
 
 Outstanding: actual source-file verification/import; row-by-row enrichment editing; richer team objects and interactive activity boards; participant internal quiz assessment; AI question-generation review workflow; durable notification inbox/preferences; authenticated hosted visual/accessibility/manual evidence; release security/privacy/retention and backup/restore operations. Existing game screens bound reads to 100 sessions/participants, 500 results and 1,000 bank questions; full pagination remains needed before larger tenants.
+
+## Supplied question bank and enrichment
+
+The supplied local CSV was checked: 226 rows, six columns, unique prompts, four populated choices and valid A–D answer letters. It has no department, level, difficulty or manual citations. All rows were staged as a private unpublished preview with classification errors, preserving original headers, values and source. Source CSV is ignored by Git. No answers were inferred and no question was published.
+
+Managers can edit each preview row, supply enrichment and retain the original CSV values. Optimistic revision checks reject stale edits; published imports cannot be edited. Publication still requires a separate explicit review. The corrected director was provisioned as Platform Owner under the user's explicit approval; MFA remains required.

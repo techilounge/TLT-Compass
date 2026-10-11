@@ -10,6 +10,8 @@ export default tseslint.config(
       "playwright-report/**",
       "test-results/**",
       "next-env.d.ts",
+      "tmp/**",
+      "output/**",
     ],
   },
   js.configs.recommended,

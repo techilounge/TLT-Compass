@@ -27,7 +27,7 @@ describe("atomic calendar import review and rollback", () => {
         "a".repeat(64),
         source,
         defaultMapping,
-        parseCalendarCsv(source, defaultMapping, "UTC"),
+        JSON.stringify(parseCalendarCsv(source, defaultMapping, "UTC")),
       ],
     );
     return id;

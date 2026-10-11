@@ -36,8 +36,8 @@ describe("reviewed private question bank", () => {
         "a".repeat(64),
         source,
         mapping,
-        parsed.headers,
-        parsed.candidates,
+        JSON.stringify(parsed.headers),
+        JSON.stringify(parsed.candidates),
       ],
     );
     expect(
@@ -50,6 +50,57 @@ describe("reviewed private question bank", () => {
     await expect(
       db.query("select public.publish_question_import($1,array[0],true)", [id]),
     ).rejects.toThrow("Not authorized");
+  });
+  it("allows scoped draft enrichment, rejects stale updates and preserves original source", async () => {
+    const payload = {
+      ...parsed.candidates[0].question!,
+      explanation: "Reviewed synthetic explanation",
+    };
+    await asUser(db, ids.otherDirector);
+    await expect(
+      db.query("select public.edit_question_candidate($1,0,0,$2)", [
+        id,
+        payload,
+      ]),
+    ).rejects.toThrow("Not authorized");
+    await asUser(db, ids.mentor);
+    await expect(
+      db.query("select public.edit_question_candidate($1,0,0,$2)", [
+        id,
+        payload,
+      ]),
+    ).rejects.toThrow("Not authorized");
+    await asUser(db, ids.director);
+    await db.query("select public.edit_question_candidate($1,0,0,$2)", [
+      id,
+      payload,
+    ]);
+    await expect(
+      db.query("select public.edit_question_candidate($1,0,0,$2)", [
+        id,
+        payload,
+      ]),
+    ).rejects.toThrow("Preview changed");
+    await expect(
+      db.query("select public.edit_question_candidate($1,0,1,$2)", [
+        id,
+        { ...payload, department_code: "" },
+      ]),
+    ).rejects.toThrow("enrichment required");
+    const result = await db.query<{
+      original_source: string;
+      candidates: typeof parsed.candidates;
+    }>(
+      "select original_source,candidates from public.question_imports where id=$1",
+      [id],
+    );
+    expect(result.rows[0].original_source).toBe(source);
+    expect(result.rows[0].candidates[0].original).toEqual(
+      parsed.candidates[0].original,
+    );
+    expect(
+      (await db.query("select id from public.quiz_questions")).rows,
+    ).toHaveLength(0);
   });
   it("requires human manager review and publishes selected valid questions atomically", async () => {
     await asUser(db, ids.mentor);
