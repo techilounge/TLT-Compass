@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 type Reply = {
   answer: string;
   uncertain: boolean;
+  retrieved_count: number;
+  available_count: number;
   sources: {
     id: string;
     title: string;
@@ -87,6 +89,11 @@ export function AIAssistant({
       {reply && (
         <div aria-live="polite">
           <p className="whitespace-pre-wrap">{reply.answer}</p>
+          <p className="mt-3 text-sm">
+            Checked {reply.retrieved_count} of {reply.available_count}{" "}
+            requirement excerpts, selected by wording relevance. Omitted sources
+            may contain relevant policy; verify the original manual.
+          </p>
           {reply.uncertain && (
             <p className="notice">
               Uncertainty reported. Ask the director to review the cited

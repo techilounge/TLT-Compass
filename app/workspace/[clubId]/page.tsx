@@ -578,6 +578,13 @@ export default async function ClubPage({
                         <p className="mt-2 text-xs">
                           {req.source_section}, page {req.source_page}
                         </p>
+                        {isManager && r.status === "draft" && (
+                          <Link
+                            href={`/workspace/${clubId}/curriculum/${req.id}`}
+                          >
+                            Edit draft requirement
+                          </Link>
+                        )}
                       </li>
                     ))}
                 </ul>

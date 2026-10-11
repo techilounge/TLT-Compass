@@ -27,3 +27,7 @@ The exact outbound values appear before the user confirms provider transmission.
 ## Usage reporting
 
 The providers page now shows full current-UTC-month reservation totals, estimated token costs, attempt outcomes and daily totals. Reporting is independent of the recent-100-attempt table. Eligible managers see their club; other eligible staff see only their own attempts. Platform Owners additionally see platform-wide totals. Internal aggregation helpers are not callable by browser/runtime roles. Tests use more than 100 attempts and check foreign-club, personal and global scope. A configurable club dashboard warning threshold defaults to 80 percent and is also used for that manager's platform warning display. Warnings appear in-app; external billing alerts and reconciliation/monitoring operations remain release work.
+
+## Bounded curriculum retrieval
+
+The rules assistant loads up to 1,000 approved-version requirements, ranks complete excerpts by deterministic word overlap and stable ID ties, and includes at most 40 within a 22,000-character serialized prompt. Oversized versions or metadata fail before inference; no excerpt is cut mid-record. Responses disclose selected and available counts and may cite only selected requirement IDs. This is lexical retrieval, not semantic search or exhaustive policy review. General rule settings, cross-document conflicts, retrieval relevance and prompt-injection/answer-quality evaluation remain unfinished acceptance work.

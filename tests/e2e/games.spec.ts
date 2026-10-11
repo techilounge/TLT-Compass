@@ -10,6 +10,7 @@ for (const path of [
   "games/results",
   "games/teams",
   "curriculum/catalog",
+  `curriculum/${record}`,
   "ai/proposals",
   `ai/proposals/${record}`,
 ])

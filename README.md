@@ -1,6 +1,6 @@
 # TLT Compass
 
-Mobile-first Teen Leadership Training program manager with club isolation, MFA, configurable versioned curriculum, supervised Record Book reviews, attendance, training hours, private exports, recognition, calendar imports, AI provider controls and supervised games. Staging has 22 migrations applied. Live provider acceptance, hosted workflow validation and operational release gates remain open; this is not a production release.
+Mobile-first Teen Leadership Training program manager with club isolation, MFA, configurable versioned curriculum, supervised Record Book reviews, attendance, training hours, private exports, recognition, calendar imports, AI provider controls and supervised games. See the implementation status for migration and acceptance evidence. Live provider acceptance, hosted workflow validation and operational release gates remain open; this is not a production release.
 
 ## Local development
 
