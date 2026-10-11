@@ -59,6 +59,17 @@ export default async function EventPage({
     throw new Error("Unable to load event.");
   if (!event.data) notFound();
   const e = event.data;
+  const provenance = manager
+    ? await db
+        .from("calendar_drafts")
+        .select("id,source_kind,source_reference")
+        .eq("club_id", clubId)
+        .eq("published_event_id", eventId)
+        .neq("source_reference", "")
+        .order("created_at", { ascending: false })
+        .limit(20)
+    : null;
+  if (provenance?.error) throw Error("Unable to load event provenance");
   const selected = q.occurrence
     ? occurrences.data!.find((o) => o.id === q.occurrence)
     : (occurrences.data!.find(
@@ -90,6 +101,22 @@ export default async function EventPage({
           </a>
         )}
       </nav>
+      {!!provenance?.data?.length && (
+        <details className="panel">
+          <summary>Source references · latest 20</summary>
+          <ul>
+            {provenance.data.map((source) => (
+              <li key={source.id}>
+                <Link
+                  href={`/workspace/${clubId}/calendar/drafts/${source.id}`}
+                >
+                  {source.source_kind}: {source.source_reference}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </details>
+      )}
       <header>
         <p className="eyebrow">
           {club.name} · {e.status} · revision {e.revision}

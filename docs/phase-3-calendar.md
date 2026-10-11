@@ -7,3 +7,9 @@ Migrations 014–016 applied to authorized staging on 11 October 2026, without s
 Remaining acceptance: authenticated desktop/mobile visual and accessibility walkthroughs, hosted multi-user isolation and native PostgreSQL concurrency evidence, retention/deletion and upload scanning operations, monitored background-worker execution. PDF jobs currently run through an authenticated resumable browser-triggered endpoint; there is no external job scheduler. Scanned PDFs remain unresolved for human entry; OCR/vision and AI extraction are pending. Source text is untrusted data, including embedded instructions.
 
 Development continues directly into Phase 4; this does not declare all Phase 3 release criteria complete.
+
+## Fixture and provenance evidence
+
+The unit suite includes more than ten distinct synthetic PDF/CSV cases: basic rows, BOM/accents, custom semicolon headers, quoted commas, multiline instruction-like text, missing dates, ambiguous DST, duplicate rows, invalid zones, all-day boundaries, malformed/oversized/header-duplicate input, explicit PDF rows, multiple PDF pages, ambiguous prose dates, image-only pages, active scripts and excessive pages. This demonstrates those specific cases, not arbitrary scanned or table layouts.
+
+Migration 029 retains PDF page numbers in separately reviewed publication references. Managers can open the latest source-reference trail from published events without exposing private extracted text to participants. The PDF publication regression and calendar import tests pass (nine cases); no autonomous publication was added.

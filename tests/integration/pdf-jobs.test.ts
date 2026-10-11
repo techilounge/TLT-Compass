@@ -91,4 +91,18 @@ describe("durable private PDF jobs", () => {
       (await db.query("select id from public.calendar_events")).rows,
     ).toHaveLength(0);
   });
+  it("retains exact PDF page provenance after separate human publication", async () => {
+    await db.query(
+      "select public.publish_calendar_import($1,1,array[0],true)",
+      [job],
+    );
+    const events = (
+      await db.query<{ source_kind: string; source_reference: string }>(
+        "select source_kind,source_reference from public.calendar_drafts where published_event_id is not null",
+      )
+    ).rows;
+    expect(events).toHaveLength(1);
+    expect(events[0].source_kind).toBe("pdf");
+    expect(events[0].source_reference).toContain("PDF p. 2");
+  });
 });
