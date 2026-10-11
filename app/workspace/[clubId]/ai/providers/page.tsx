@@ -175,6 +175,12 @@ export default async function ProvidersPage({
               max_attempts: [3, 1, 5, "Maximum attempts"],
               circuit_failures: [3, 1, 10, "Circuit failure threshold"],
               cooldown_seconds: [300, 30, 86400, "Circuit cooldown (seconds)"],
+              analytics_minimum_cohort: [
+                5,
+                1,
+                100,
+                "Minimum cohort for AI analytics",
+              ],
             }).map(([key, values]) => (
               <Field key={key} label={String(values[3])}>
                 <input

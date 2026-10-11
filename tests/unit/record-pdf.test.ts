@@ -58,7 +58,7 @@ describe("private Record Book PDF", () => {
       await mkdir("tmp/pdfs", { recursive: true });
       await writeFile("tmp/pdfs/record-book-synthetic.pdf", bytes);
     }
-  });
+  }, 15000); // Unicode font embedding can exceed 5s alongside production builds.
   it("rejects oversized reports before rendering", async () => {
     await expect(
       recordPdf(Array.from({ length: 2501 }, () => [])),

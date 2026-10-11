@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import { requireClub } from "@/lib/auth/session";
 import { uuid } from "@/modules/program-rules/contracts";
 import { AIAssistant } from "@/components/workspace/ai-assistant";
+import { AIAnalytics } from "@/components/workspace/ai-analytics";
 export default async function AIPage({
   params,
 }: {
@@ -36,6 +37,16 @@ export default async function AIPage({
     .order("version", { ascending: false })
     .limit(100);
   if (versions.error) throw new Error("Unable to load approved sources");
+  const manager = roles.some((r) => ["director", "coordinator"].includes(r));
+  const seasons = manager
+    ? await db
+        .from("seasons")
+        .select("id,name")
+        .eq("club_id", clubId)
+        .order("starts_on", { ascending: false })
+        .limit(100)
+    : null;
+  if (seasons?.error) throw Error("Unable to load analytics scopes");
   return (
     <main
       id="main"
@@ -71,6 +82,7 @@ export default async function AIPage({
         </p>
       </div>
       <AIAssistant clubId={clubId} versions={versions.data ?? []} />
+      {manager && <AIAnalytics clubId={clubId} seasons={seasons?.data ?? []} />}
       {roles.some((r) => ["director", "coordinator"].includes(r)) && (
         <Link href={`/workspace/${clubId}/ai/proposals`}>
           Event proposals and human review

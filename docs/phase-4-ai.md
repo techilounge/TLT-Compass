@@ -17,3 +17,9 @@ Development proceeds without a phase permission gate. The app is not yet product
 ## Global spending and rate controls
 
 A platform-wide switch and UTC monthly reservation ceiling now guard every AI reservation before inference. Global and per-person attempt ceilings span all clubs. Reservations take a global lock before the existing club lock, and an over-budget attempt rolls back its ledger insertion. Failed/interrupted reservations remain charged conservatively. Platform Owners with MFA configure these controls through a named function; changes have append-only history and browser sessions cannot update tables directly. The underlying tenant-only reservation function is no longer callable by authenticated users or the runtime role. Real migrations default global AI off with a zero-dollar ceiling; synthetic tests explicitly enable their isolated fixtures. This lock favors correctness for the initial scale; throughput/load acceptance remains pending.
+
+## Read-only aggregate analytics assistant
+
+Eligible club managers can preview a fixed SQL dashboard projection for all accessible seasons or one verified club season. Only allowlisted integer metrics are included; names, IDs, evidence, attendance reasons and mentor caseloads are excluded. A configurable minimum cohort defaults to five, and smaller nonzero counts are suppressed. Aggregation and suppression are not guarantees of anonymity and still require applicable privacy review.
+
+The exact outbound values appear before the user confirms provider transmission. A hash binds inference to the freshly rechecked scope, metrics and cohort policy; changed data requires a new preview. The model receives no query tool or SQL execution path. Typed replies may cite only projected metrics and cannot contain mutation/tool fields. UI pairs comments with original server values and warns that a snapshot establishes neither trends nor causes. Semantic accuracy and live-provider acceptance remain pending.

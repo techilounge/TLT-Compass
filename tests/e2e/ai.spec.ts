@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 const club = "10000000-0000-4000-8000-000000000001";
-for (const path of ["ai", "ai/providers"])
+for (const path of ["ai", "ai/providers", "ai/analytics"])
   test(`AI session boundary: ${path}`, async ({ page }) => {
     await page.goto(`/workspace/${club}/${path}`);
     await expect(page).toHaveURL(/\/login/);
@@ -17,4 +17,16 @@ test("assistant rejects cross-origin requests before processing", async ({
   });
   expect(result.status()).toBe(403);
   expect(await result.json()).toEqual({ error: "Assistant unavailable" });
+});
+test("analytics rejects cross-origin inference before processing", async ({
+  request,
+}) => {
+  const response = await request.post(`/workspace/${club}/ai/analytics`, {
+    headers: { Origin: "https://untrusted.example" },
+    data: { focus: "completion" },
+  });
+  expect(response.status()).toBe(403);
+  expect(await response.json()).toEqual({
+    error: "Analytics assistant unavailable",
+  });
 });
