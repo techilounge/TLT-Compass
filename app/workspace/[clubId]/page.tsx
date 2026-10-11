@@ -253,6 +253,9 @@ export default async function ClubPage({
             )}
             <Link href={`/workspace/${clubId}/calendar`}>Calendar</Link>
             <Link href={`/workspace/${clubId}/games`}>Games</Link>
+            <Link href={`/workspace/${clubId}/notifications`}>
+              Notifications
+            </Link>
             {roles.some((r) =>
               [
                 "director",

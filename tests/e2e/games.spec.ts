@@ -5,6 +5,8 @@ for (const path of [
   "games",
   "games/import",
   `games/import/${record}`,
+  `games/import/${record}/rows/0`,
+  "notifications",
   "games/results",
   "curriculum/catalog",
   "ai/proposals",
