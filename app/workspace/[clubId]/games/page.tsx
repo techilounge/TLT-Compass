@@ -41,6 +41,11 @@ export default async function GamesPage({
     >
       <Link href={`/workspace/${clubId}`}>← Club workspace</Link>
       <h1>Games & leadership practice</h1>
+      {roles.some((r) => ["director", "coordinator"].includes(r)) && (
+        <Link href={`/workspace/${clubId}/games/teams`}>
+          Supervised team challenges
+        </Link>
+      )}
       <Link href={`/workspace/${clubId}/games/results`}>
         Supervised sessions and result reviews
       </Link>

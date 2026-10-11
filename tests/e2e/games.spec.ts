@@ -8,6 +8,7 @@ for (const path of [
   `games/import/${record}/rows/0`,
   "notifications",
   "games/results",
+  "games/teams",
   "curriculum/catalog",
   "ai/proposals",
   `ai/proposals/${record}`,
