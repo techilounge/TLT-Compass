@@ -57,3 +57,8 @@ jobs:
       - run: npm run test:integration
         env:
           TEST_DATABASE_URL: postgresql://postgres:synthetic-test-only@127.0.0.1:5432/compass_test
+      - name: Rehearse synthetic backup and restore with RLS
+        run: node --experimental-strip-types scripts/verify-synthetic-recovery.mjs
+        env:
+          TEST_DATABASE_URL: postgresql://postgres:synthetic-test-only@127.0.0.1:5432/compass_test
+          TEST_POSTGRES_CONTAINER: ${{ job.services.postgres.id }}

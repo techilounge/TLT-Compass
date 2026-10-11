@@ -5,6 +5,7 @@ import { uuid } from "@/modules/program-rules/contracts";
 import { Field, Hidden, SaveButton } from "@/components/workspace/forms";
 import { providerTypes, purposes } from "@/modules/ai/contracts";
 import { configureAI } from "./actions";
+import { AIUsage } from "@/components/workspace/ai-usage";
 export default async function ProvidersPage({
   params,
   searchParams,
@@ -65,6 +66,12 @@ export default async function ProvidersPage({
         .single()
     : null;
   if (globalSettings?.error) throw Error("Unable to load global AI controls");
+  const [clubUsage, globalUsage] = await Promise.all([
+    db.rpc("club_ai_usage", { target_club: clubId }),
+    owner ? db.rpc("global_ai_usage") : Promise.resolve(null),
+  ]);
+  if (clubUsage.error || globalUsage?.error)
+    throw Error("Unable to load AI usage");
   return (
     <main
       id="main"
@@ -89,6 +96,22 @@ export default async function ProvidersPage({
           eligible club manager role and MFA. Club director access does not
           automatically grant platform ownership.
         </p>
+      )}
+      <AIUsage
+        usage={clubUsage.data}
+        budget={
+          roles.some((r) => ["director", "coordinator"].includes(r))
+            ? Number(settings.data?.monthly_budget_usd ?? 0)
+            : undefined
+        }
+        alertPercent={settings.data?.usage_alert_percent ?? 80}
+      />
+      {owner && globalUsage?.data && (
+        <AIUsage
+          usage={globalUsage.data}
+          budget={Number(globalSettings?.data?.monthly_budget_usd ?? 0)}
+          alertPercent={settings.data?.usage_alert_percent ?? 80}
+        />
       )}
       {owner && (
         <details className="panel">
@@ -180,6 +203,12 @@ export default async function ProvidersPage({
                 1,
                 100,
                 "Minimum cohort for AI analytics",
+              ],
+              usage_alert_percent: [
+                80,
+                1,
+                100,
+                "Usage dashboard warning threshold (%)",
               ],
             }).map(([key, values]) => (
               <Field key={key} label={String(values[3])}>

@@ -100,4 +100,54 @@ describe("global AI ceilings across tenants", () => {
       db.query("update public.ai_global_settings set enabled=true"),
     ).rejects.toThrow("permission denied");
   });
+  it("reports the full month beyond the recent-attempt table while enforcing manager and owner scope", async () => {
+    await db.exec("reset role");
+    await db.query(
+      "insert into public.ai_attempts(club_id,provider_id,model_id,actor_profile_id,actor_role,purpose,trace_id,reserved_usd) select club_id,provider_id,model_id,actor_profile_id,actor_role,purpose,gen_random_uuid(),0.001 from public.ai_attempts cross join generate_series(1,151) where model_id=$1 limit 151",
+      [northModel],
+    );
+    await asUser(db, ids.director);
+    const club = (
+      await db.query<{
+        usage: { attempts: number; scope: string; days: unknown[] };
+      }>("select public.club_ai_usage($1) usage", [ids.north])
+    ).rows[0].usage;
+    expect(club.attempts).toBe(152);
+    expect(club.scope).toBe("club");
+    expect(club.days).toHaveLength(1);
+    expect(
+      (
+        await db.query<{ usage: { attempts: number } }>(
+          "select public.global_ai_usage() usage",
+        )
+      ).rows[0].usage.attempts,
+    ).toBe(152);
+    await asUser(db, ids.otherDirector);
+    expect(
+      (
+        await db.query<{ usage: { attempts: number } }>(
+          "select public.club_ai_usage($1) usage",
+          [ids.cedar],
+        )
+      ).rows[0].usage.attempts,
+    ).toBe(0);
+    await expect(
+      db.query("select public.club_ai_usage($1)", [ids.north]),
+    ).rejects.toThrow("Not authorized");
+    await asUser(db, ids.mentor);
+    expect(
+      (
+        await db.query<{ usage: { attempts: number; scope: string } }>(
+          "select public.club_ai_usage($1) usage",
+          [ids.north],
+        )
+      ).rows[0].usage,
+    ).toMatchObject({ attempts: 0, scope: "own" });
+    await expect(db.query("select public.global_ai_usage()")).rejects.toThrow(
+      "Not authorized",
+    );
+    await expect(
+      db.query("select public.ai_usage_payload(null,null)"),
+    ).rejects.toThrow("permission denied");
+  });
 });

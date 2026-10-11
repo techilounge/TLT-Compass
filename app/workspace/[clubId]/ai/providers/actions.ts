@@ -52,6 +52,7 @@ export async function configureAI(clubId: string, form: FormData) {
           circuit_failures: z.coerce.number().int().min(1).max(10),
           cooldown_seconds: z.coerce.number().int().min(30).max(86400),
           analytics_minimum_cohort: z.coerce.number().int().min(1).max(100),
+          usage_alert_percent: z.coerce.number().int().min(1).max(100),
         })
         .parse(Object.fromEntries(form));
       result = await db.from("ai_settings").upsert({

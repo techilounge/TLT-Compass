@@ -1,0 +1,7 @@
+# Recovery rehearsal and remaining operational gates
+
+CI now includes a synthetic native PostgreSQL rehearsal after policy tests. It creates an isolated fixture database, uses PostgreSQL's custom-format dump, restores into a second database and checks fixture counts, RLS presence, tenant visibility and credential-table denial. The dump remains in process memory and both test databases are removed. It refuses hosted databases and requires the CI container identifier. The first CI result is pending; adding the script does not establish successful recovery.
+
+This verifies a same-instance synthetic database round trip. It does not restore a real Supabase project, Auth email configuration, Storage objects, external provider state or the separately stored encryption root key. Target roles must already exist, as they do in the rehearsal. A production recovery procedure must inventory these dependencies, set approved recovery objectives, configure encrypted backups and access, and perform an authorized restoration into an isolated staging project before release. Never restore over the active database during a drill.
+
+After a real rehearsal, document backup age, elapsed restoration time, schema and row checks, restored authorization behavior, authentication/MFA behavior, private file access, credential decryption and key rotation. Keep private dumps and key material outside Git and CI artifacts. Production release remains blocked until the responsible operator and director accept those results.
