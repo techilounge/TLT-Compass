@@ -1,0 +1,23 @@
+# Games continuation
+
+The app now has seven supervised activity starting points, configurable session instructions/scoring/attempt limits, a staff-hosted practice round with per-round shuffled questions and answers, private CSV question previews, explicit answer-format mapping, selected-row human publication and manual/SabiQuiz result submissions with scoped adult review. No undocumented SabiQuiz API is assumed. Original CSV headers and source rows are preserved privately; the supplied 226-question bank is now staged privately for enrichment as described below.
+
+Question correctness and distinct choices are validated on server and database boundaries. Participants cannot read question-bank answers or source imports. The hosted practice screen is staff-only and includes answers for the facilitator; it is not a participant self-test or a secure assessment. Game scores remain pending until reviewed, cannot exceed configured ceilings/attempt limits, and never automatically award points or official completion. Reviewed values cannot be edited through application grants/functions; rejected results can be resubmitted within session rules. Recognition remains a separately authorized ledger workflow.
+
+Migrations 021–022 applied to staging on 11 October 2026 without demo questions or game results. The current full suite passes 45 unit and 81 SQL integration tests; production build/lint/typecheck pass. Question tests cover exact original headers, explicit answer formats, bad/duplicate answers, injection-as-data, shuffled correctness, tenant isolation, atomic selected publication and participant answer denial. Game result tests cover scope, retries, ceilings/attempt limits, adult review, no automatic points/completion and session closure.
+
+Outstanding: richer team objects and interactive activity boards; participant internal quiz assessment; AI question-generation review workflow; broader notification types and communication-policy acceptance; authenticated hosted visual/accessibility/manual evidence; release security/privacy/retention and backup/restore operations. Existing game screens bound reads to 100 sessions/participants, 500 results and 1,000 bank questions; full pagination remains needed before larger tenants.
+
+## Supplied question bank and enrichment
+
+The supplied local CSV was checked: 226 rows, six columns, unique prompts, four populated choices and valid A–D answer letters. It has no department, level, difficulty or manual citations. All rows were staged as a private unpublished preview with classification errors, preserving original headers, values and source. Source CSV is ignored by Git. No answers were inferred and no question was published.
+
+Managers can edit each preview row, supply enrichment and retain the original CSV values. Optimistic revision checks reject stale edits; published imports cannot be edited. Publication still requires a separate explicit review. The corrected director was provisioned as Platform Owner under the user's explicit approval; MFA remains required.
+
+## Durable in-app task notifications
+
+Task assignment, submission, reviewer changes, verification, closure and cancellation transitions produce generic recipient-scoped inbox updates. Draft creation produces no update. Eligible managers and currently assigned reviewers receive submission notices; participants receive their own status notices. Original evidence, names and review feedback are excluded. Reads and idempotent read markers recheck current scope, consent and active participant state. Inbox preferences can disable new task updates; pagination bounds queries. No email or device delivery is implemented, so there is no background delivery during quiet hours. Calendar, due-date scheduling and recognition notifications remain pending.
+
+## Supervised team groups
+
+Eligible club managers can create teams with configured capacities of 1–20, assign or move active consented participants from the session season, and remove members while preserving history. One current team per participant/session is enforced. Session locks serialize capacity checks and prevent changes after closure. Team pages paginate 25 teams, search participant aliases and batch alias lookups. Membership reads retain staff/participant scope. Teams never write scores, points or completion. SQL tests cover role/scope denial, capacity, retries, moves/history, withdrawn consent and closed-session freezing. Migration 028 is applied to staging. Cooperative activity instructions and reviewed individual results remain the facilitation workflow; live multiplayer boards and team score ledgers are not implemented.

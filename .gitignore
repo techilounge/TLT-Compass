@@ -1,0 +1,14 @@
+node_modules/
+.next/
+out/
+coverage/
+playwright-report/
+test-results/
+.env*
+!.env.example
+*.tsbuildinfo
+*.pdf
+.vercel/
+tmp/
+output/
+TLT_Leadership_SabiQuiz_Question_Bank.csv
