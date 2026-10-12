@@ -25,10 +25,40 @@ export async function configureAI(clubId: string, form: FormData) {
   let notice = "saved";
   try {
     const operation = z
-      .enum(["global", "settings", "provider", "model", "reset", "test", "key"])
+      .enum([
+        "global",
+        "settings",
+        "provider",
+        "model",
+        "reset",
+        "test",
+        "key",
+        "move",
+        "toggle",
+      ])
       .parse(form.get("operation"));
     let result;
-    if (operation === "global") {
+    if (operation === "move") {
+      result = await db.rpc("move_ai_provider", {
+        target_club: clubId,
+        target_provider: uuid.parse(form.get("id")),
+        direction: z.coerce
+          .number()
+          .pipe(z.union([z.literal(-1), z.literal(1)]))
+          .parse(form.get("direction")),
+      });
+    } else if (operation === "toggle") {
+      result = await db
+        .from("ai_providers")
+        .update({
+          enabled:
+            z.enum(["true", "false"]).parse(form.get("enabled")) === "true",
+        })
+        .eq("club_id", clubId)
+        .eq("id", uuid.parse(form.get("id")))
+        .select("id")
+        .single();
+    } else if (operation === "global") {
       const input = z
         .object({
           monthly_budget: z.coerce.number().min(0).max(100000),
